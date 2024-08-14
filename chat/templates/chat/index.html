@@ -2,8 +2,20 @@
 
 {% block title %}ChatGPT Integration{% endblock %}
 
-{% block header %}Welcome to the ChatGPT Integration{% endblock %}
+{% block header %}
+    Simple Chat Interface
+{% endblock %}
 
 {% block content %}
     <p>This is a simple chat interface using ChatGPT.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+    {% if result %}
+        <div class="alert alert-info mt-3">
+            <strong>ChatGPT:</strong> {{ result }}
+        </div>
+    {% endif %}
 {% endblock %}
