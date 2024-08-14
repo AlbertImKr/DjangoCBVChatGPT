@@ -65,7 +65,7 @@ def extract_text_from_youtube(youtube_url):
     :return: youtube 비디오의 자막
     """
     video_id = youtube_url.split("v=")[-1]
-    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["ko"])
+    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["en"])
     transcript_text = " ".join([line["text"] for line in transcript])
     return transcript_text
 
