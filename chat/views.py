@@ -1,27 +1,11 @@
-from django import forms
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
-from openai import OpenAI
 
 from .forms import ChatForm
-
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
-
-
-def get_completion(prompt, model="gpt-3.5-turbo"):
-    try:
-        chat_completion = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=100,
-                temperature=0.5,
-        )
-        forms.Form.clean()
-        return chat_completion.choices[0].message.content.strip()
-    except Exception as e:
-        return f"An error occurred: {e}"
+from .utils import generate_prompt
+from .utils import get_completion
+from .utils import translate_to_korean
 
 
 class ChatView(LoginRequiredMixin, FormView):
@@ -30,10 +14,18 @@ class ChatView(LoginRequiredMixin, FormView):
     success_url = '/'
 
     def form_valid(self, form):
-        user_input = form.cleaned_data['user_input']
-        result = get_completion(user_input)
+        text_input = form.cleaned_data.get('text_input')
+        file_input = form.cleaned_data.get('file_input')
+        youtube_url = form.cleaned_data.get('youtube_url')
+        prompt = generate_prompt(text_input, file_input, youtube_url)
+        summary_result = get_completion(prompt)
+
+        translation_result = translate_to_korean(summary_result)
         return self.render_to_response(
-                self.get_context_data(form=form, result=result)
+                self.get_context_data(
+                        summary_result=summary_result,
+                        translation_result=translation_result,
+                )
         )
 
 
