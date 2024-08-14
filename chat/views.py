@@ -1,7 +1,9 @@
+from django import forms
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 from openai import OpenAI
-from django import forms
 
 from .forms import ChatForm
 
@@ -22,7 +24,7 @@ def get_completion(prompt, model="gpt-3.5-turbo"):
         return f"An error occurred: {e}"
 
 
-class ChatView(FormView):
+class ChatView(LoginRequiredMixin, FormView):
     template_name = 'chat/index.html'
     form_class = ChatForm
     success_url = '/'
@@ -34,3 +36,6 @@ class ChatView(FormView):
                 self.get_context_data(form=form, result=result)
         )
 
+
+class HomeView(TemplateView):
+    template_name = 'chat/home.html'

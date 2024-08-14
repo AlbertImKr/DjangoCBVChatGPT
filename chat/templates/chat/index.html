@@ -13,6 +13,13 @@
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Send</button>
     </form>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger mt-3">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     {% if result %}
         <div class="alert alert-info mt-3">
             <strong>ChatGPT:</strong> {{ result }}
